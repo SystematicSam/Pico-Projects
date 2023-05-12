@@ -25,8 +25,10 @@ def main():
     while True:
         # Toggles LED on/off
         led.toggle()
+        # Print multiples of 13
         print("13 times {} is {}".format(n, 13 * n))
         n += 1
+        # 2 Hz program, so sleep for half a second
         sleep(0.5)
 
 

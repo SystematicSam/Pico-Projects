@@ -20,7 +20,7 @@ from time import sleep
 from PiicoDev_SSD1306 import create_PiicoDev_SSD1306
 
 __author__ = "Sam Rogers"
-__version__ = "0.1"
+__version__ = "1.0"
 
 
 class Console:

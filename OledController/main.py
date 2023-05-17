@@ -27,16 +27,21 @@ class Console:
     def __init__(self):
         self.oled = create_PiicoDev_SSD1306()
         self.line_pos = [0, 12, 24, 36, 48]
-        self.line_index = 0
+        self.curr_line = 0
         self.data = []
 
+    def print(self, line: str):
+        self.data[self.curr_line - 1] += line
+
     def println(self, line: str):
-        if self.line_index < len(self.line_pos):
-            self.data.insert(self.line_index, line)
-            self.line_index += 1
+        if self.curr_line < len(self.line_pos):
+            self.data.insert(self.curr_line, line)
+            self.curr_line += 1
         else:
             self.data.pop(0)
-            self.data.insert(self.line_index, line)
+            self.data.insert(self.curr_line, line)
+
+    def refresh(self):
         self.oled.fill(0)
         for i in range(len(self.data)):
             self.oled.text(self.data[i], 0, self.line_pos[i])
@@ -54,6 +59,9 @@ def main():
     count = 0
     while True:
         display.println(str(count))
+        if count % 2 == 0:
+            display.print("even")
+        display.refresh()
         count += 1
         sleep(0.5)
 

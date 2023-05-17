@@ -42,6 +42,9 @@ class Console:
             self.oled.text(self.data[i], 0, self.line_pos[i])
         self.oled.show()
 
+    def clear(self):
+        self.oled.fill(0)
+
 
 def main():
     """

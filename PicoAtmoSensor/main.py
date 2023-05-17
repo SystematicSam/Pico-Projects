@@ -11,6 +11,7 @@ Created: 17/05/2023
 """
 from PiicoDev_BME280 import PiicoDev_BME280
 from PiicoDev_Unified import sleep_ms
+from console import Console
 
 __author__ = "Sam Rogers"
 __version__ = "0.1"

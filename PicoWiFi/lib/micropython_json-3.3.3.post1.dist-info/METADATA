@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: micropython-json
+Version: 3.3.3.post1
+Summary: CPython json module ported to MicroPython
+Home-page: https://github.com/pfalcon/micropython-lib
+Author: CPython Developers
+Author-email: python-dev@python.org
+License: Python
+Requires-Dist: micropython-re-pcre
+

@@ -15,12 +15,19 @@ Author: Sam Rogers
 
 Created: 18/05/2023
 """
+import json
+
 __author__ = "Sam Rogers"
 __version__ = "0.1"
 
+
 def main():
-    pass
+    for param in config['secrets']:
+        print(param)
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    f = open("config.json", "r")
+    config = json.load(f)
     main()

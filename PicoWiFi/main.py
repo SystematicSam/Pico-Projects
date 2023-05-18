@@ -23,8 +23,8 @@ __version__ = "0.1"
 
 
 def main():
-    for param in config['secrets']:
-        print(param)
+    for k, v in config['secrets'].items():
+        print(k, ":", v)
 
 
 # Press the green button in the gutter to run the script.

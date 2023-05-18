@@ -1,7 +1,7 @@
 """
 PiicoDev LIS3DH 3-Axis Accelerometer Sensor Program
 
-This program reads linear and angular accelerations from the PiicoDev
+This program reads linear and tilt angles from the PiicoDev
 Accelerometer Sensor and outputs to PiicoDev OLED Display Module.
 Tapping and shaking detection is also available.
 
@@ -34,13 +34,21 @@ def main():
     # Change line positions to make first line appear as a heading
     display.line_pos = [0, 15, 27, 39, 51]
     while True:
-        x, y, z = sensor.acceleration
+        x, y, z = sensor.acceleration  # linear accelerations
+        # x, y, z = sensor.angle  # angles
         display.data[0] = "-Accelerometer-"
-        display.data[1] = "X: %.2f" % x
-        display.data[2] = "Y: %.2f" % y
-        display.data[3] = "Z: %.2f" % z
+        display.data[1] = "  X: %.2f" % x
+        display.data[2] = "  Y: %.2f" % y
+        display.data[3] = "  Z: %.2f" % z
+        if sensor.tapped:
+            display.data[4] = "--TAPPED--"
+        elif sensor.shake():
+            display.data[4] = "--SHAKEN--"
+        else:
+            display.data[4] = ""
+
         display.refresh()
-        sleep_ms(10)
+        sleep_ms(100)
 
 
 # Press the green button in the gutter to run the script.

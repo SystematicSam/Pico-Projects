@@ -15,7 +15,8 @@ Author: Sam Rogers
 
 Created: 18/05/2023
 """
-import json
+import sys
+import ujson
 
 __author__ = "Sam Rogers"
 __version__ = "0.1"
@@ -28,6 +29,10 @@ def main():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    f = open("config.json", "r")
-    config = json.load(f)
+    try:
+        f = open("config.json", "r")
+        config = ujson.load(f)
+    except OSError:
+        print("Error loading Config File! Exiting...")
+        sys.exit(1)
     main()

@@ -1,16 +1,39 @@
-# This is a sample Python script.
+"""
+PiicoDev LIS3DH 3-Axis Accelerometer Sensor Program
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+This program reads linear and angular accelerations from the PiicoDev
+Accelerometer Sensor and outputs to PiicoDev OLED Display Module.
+Tapping and shaking detection is also available.
+
+Author: Sam Rogers
+
+Created: 18/05/2023
+"""
+from PiicoDev_LIS3DH import PiicoDev_LIS3DH
+from PiicoDev_Unified import sleep_ms
+from console import Console
+
+__author__ = "Sam Rogers"
+__version__ = "0.1"
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def main():
+    """
+    Main Loop
+
+
+    """
+    while True:
+        x, y, z = sensor.acceleration
+        x = round(x, 2)
+        y = round(y, 2)
+        z = round(z, 2)
+        readout = "X: " + str(x) + ", Y: " + str(y) + ", Z: " + str(z)
+        print(readout)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    sensor = PiicoDev_LIS3DH()
+    sensor.range = 2
+    main()

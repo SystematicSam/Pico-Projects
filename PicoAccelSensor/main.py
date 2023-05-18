@@ -14,15 +14,16 @@ from PiicoDev_Unified import sleep_ms
 from console import Console
 
 __author__ = "Sam Rogers"
-__version__ = "0.2"
+__version__ = "1.0"
 
 
 def main():
     """
     Main Loop
 
-    Retrieves linear acceleration readings from sensor and prints to
-    console display.
+    Retrieves linear acceleration (or angle) readings from sensor and
+    prints to console display.  Shaking and tapping is also detected
+    and notified to user via OLED display.
     """
     # Print startup message:
     display.println("Starting measurements:")
@@ -46,7 +47,6 @@ def main():
             display.data[4] = "--SHAKEN--"
         else:
             display.data[4] = ""
-
         display.refresh()
         sleep_ms(100)
 

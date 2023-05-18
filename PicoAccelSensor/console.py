@@ -56,3 +56,5 @@ class Console:
         Clears the console of all text.
         """
         self.oled.fill(0)
+        self.data.clear()
+        self.curr_line = 0

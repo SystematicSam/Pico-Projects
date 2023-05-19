@@ -22,17 +22,21 @@ __author__ = "Sam Rogers"
 __version__ = "0.1"
 
 
-def main():
-    for k, v in config['secrets'].items():
+def get_config(path: str) -> dict:
+    with open(path, "r") as f:
+        config = ujson.load(f)
+        return config
+
+
+def main(cfg: dict):
+    for k, v in cfg.get("wifi").items():
         print(k, ":", v)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     try:
-        f = open("config.json", "r")
-        config = ujson.load(f)
+        main(get_config("config.json"))
     except OSError:
-        print("Error loading Config File! Exiting...")
-        sys.exit(1)
-    main()
+        print("Error opening config file! Exiting...")
+        sys.exit(-1)

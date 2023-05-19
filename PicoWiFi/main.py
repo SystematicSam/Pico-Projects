@@ -21,16 +21,29 @@ import ujson
 __author__ = "Sam Rogers"
 __version__ = "0.1"
 
+DEFAULT_WIFI = {
+    "ssid": "hello",
+    "pwd": "world"
+}
+
+
+class WiFi:
+    def __init__(self, cfg: dict):
+        self.ssid = cfg.get("ssid", DEFAULT_WIFI["ssid"])
+        self.pwd = cfg.get("pwd", DEFAULT_WIFI["pwd"])
+
+        print("SSID:\t" + self.ssid)
+        print("PWD:\t" + self.pwd)
+
 
 def get_config(path: str) -> dict:
     with open(path, "r") as f:
-        config = ujson.load(f)
-        return config
+        cfg = ujson.load(f)
+        return cfg
 
 
 def main(cfg: dict):
-    for k, v in cfg.get("wifi").items():
-        print(k, ":", v)
+    wifi = WiFi(cfg.get("wifi"))
 
 
 # Press the green button in the gutter to run the script.

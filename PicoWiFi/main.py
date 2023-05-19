@@ -33,7 +33,7 @@ DEFAULT_WIFI = {
 
 class WiFi:
     """
-    A Wi-Fi network connection.
+    A network connection, using Wi-Fi.
 
     :ivar ssid: the SSID of the network
     :ivar pwd: the password to connect to the network

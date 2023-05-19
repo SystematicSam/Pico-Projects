@@ -86,8 +86,8 @@ class WiFi:
                                wlan.status())
         else:
             # Connection successful
-            print("Wi-Fi Connected!")
             status = wlan.ifconfig()
+            print("Wi-Fi Connected!")
             print("  IP Address:\t", status[0])
             print("  Subnet Mask:\t", status[1])
             print("  Gateway:\t", status[2])

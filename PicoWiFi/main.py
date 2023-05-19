@@ -24,6 +24,7 @@ import network
 __author__ = "Sam Rogers"
 __version__ = "0.1"
 
+# Default values if Wi-Fi configuration not specified
 DEFAULT_WIFI = {
     "ssid": "hello",
     "pwd": "world"
@@ -31,13 +32,29 @@ DEFAULT_WIFI = {
 
 
 class WiFi:
+    """
+    A Wi-Fi network connection.
+
+    :ivar ssid: the SSID of the network
+    :ivar pwd: the password to connect to the network
+    """
     def __init__(self, cfg: dict):
+        """
+        Initialises the Wi-Fi configuration.
+
+        :param cfg: the config dictionary
+        """
         self.ssid = cfg.get("ssid", DEFAULT_WIFI["ssid"])
         self.pwd = cfg.get("pwd", DEFAULT_WIFI["pwd"])
         print("SSID:\t" + self.ssid)
         print("PWD:\t" + self.pwd)
 
     def connect(self):
+        """
+        Connects to the Wi-Fi network, if possible.
+
+        :raises RuntimeException: if connection fails or timeouts
+        """
         # Setup Pico in station mode and attempt Wi-Fi connection
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
@@ -78,12 +95,26 @@ class WiFi:
 
 
 def get_config(path: str) -> dict:
+    """
+    Gets the configuration parameters as a dictionary.
+
+    :param path: the path to the config file
+    :return: the config dictionary
+    """
     with open(path, "r") as f:
         cfg = ujson.load(f)
         return cfg
 
 
 def main(cfg: dict):
+    """
+    Main Loop
+
+    Creates WiFi object with configuration parameters and then connects
+    to the specified network.
+
+    :param cfg: the config dictionary
+    """
     wifi = WiFi(cfg.get("wifi"))
     wifi.connect()
 

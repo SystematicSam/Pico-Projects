@@ -1,20 +1,14 @@
 """
-Pico Wi-Fi
-
-This Micropython script acts as either an autonomous program or a
-project attachable script to connect a Pico W device to the internet.
-
-Main functionality is reading in a Wi-Fi configuration from config file
-and then attempting a connection based on that configuration.  Errors
-connecting are detected and appropriate messages displayed to user.
-
-This script is most useful for testing a connection (autonomous) or
-establishing a connection for data transfer later (project attachable).
+This module connects provides functionality for connecting a Micropython
+device (usually a Raspberry Pi Pico W) to an existing Wi-Fi network.
 
 Author: Sam Rogers
 
 Created: 18/05/2023
+
+Requires: Micropython Capable Device
 """
+
 import sys
 import time
 
@@ -22,7 +16,7 @@ import ujson
 import network
 
 __author__ = "Sam Rogers"
-__version__ = "0.1"
+__version__ = "0.2"
 
 # Default values if Wi-Fi configuration not specified
 DEFAULT_WIFI = {
@@ -31,67 +25,49 @@ DEFAULT_WIFI = {
 }
 
 
-class WiFi:
+def connect_to_wifi(ssid: str, pwd: str):
     """
-    A network connection, using Wi-Fi.
+    Connect to an existing Wi-Fi network.
 
-    :ivar ssid: the SSID of the network
-    :ivar pwd: the password to connect to the network
+    :param ssid: the name of the network to connect to
+    :param pwd: the password to connect to the network
     """
-    def __init__(self, cfg: dict):
+    # Setup Pico in station mode and attempt Wi-Fi connection
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(ssid, pwd)
+
+    # Wait for connection
+    timeout = 0
+    while timeout < 10:
         """
-        Initialises the Wi-Fi configuration.
-
-        :param cfg: the config dictionary
+        # wlan.status() return values and meanings:
+            0  STAT_LINK_DOWN       -> Link is down
+            1  STAT_LINK_JOIN       -> Connecting to wifi
+            2  STAT_LINK_NOIP       -> Connected to wifi, no ip
+            3  STAT_LINK_UP         -> Connected to wifi, got ip
+            -1 STAT_LINK_FAIL       -> Connection attempted, but failed
+            -2 STAT_LINK_NONET      -> No network found with ssid
+            -3 STAT_LINK_BADAUTH    -> Bad authentication (wrong password)
         """
-        self.ssid = cfg.get("ssid", DEFAULT_WIFI["ssid"])
-        self.pwd = cfg.get("pwd", DEFAULT_WIFI["pwd"])
-        print("SSID:\t" + self.ssid)
-        print("PWD:\t" + self.pwd)
+        if wlan.status() < 0 or wlan.status() >= 3:
+            break
+        timeout += 1
+        print("Waiting for connection...", timeout)
+        time.sleep(1)
 
-    def connect(self):
-        """
-        Connects to the Wi-Fi network, if possible.
-
-        :raises RuntimeException: if connection fails or timeouts
-        """
-        # Setup Pico in station mode and attempt Wi-Fi connection
-        wlan = network.WLAN(network.STA_IF)
-        wlan.active(True)
-        wlan.connect(self.ssid, self.pwd)
-
-        # Wait for connection
-        timeout = 0
-        while timeout < 10:
-            """
-            # wlan.status() return values and meanings:
-                0  STAT_LINK_DOWN       -> Link is down
-                1  STAT_LINK_JOIN       -> Connecting to wifi
-                2  STAT_LINK_NOIP       -> Connected to wifi, no ip
-                3  STAT_LINK_UP         -> Connected to wifi, got ip
-                -1 STAT_LINK_FAIL       -> Connection attempted, but failed
-                -2 STAT_LINK_NONET      -> No network found with ssid
-                -3 STAT_LINK_BADAUTH    -> Bad authentication (wrong password)
-            """
-            if wlan.status() < 0 or wlan.status() >= 3:
-                break
-            timeout += 1
-            print("Waiting for connection...", timeout)
-            time.sleep(1)
-
-        # Handle connection status
-        if wlan.status() != 3:
-            # Connection failed for some reason
-            raise RuntimeError("Wi-Fi Connection Failed!\nError Code:",
-                               wlan.status())
-        else:
-            # Connection successful
-            status = wlan.ifconfig()
-            print("Wi-Fi Connected!")
-            print("  IP Address:\t", status[0])
-            print("  Subnet Mask:\t", status[1])
-            print("  Gateway:\t", status[2])
-            print("  DNS Server:\t", status[3])
+    # Handle connection status
+    if wlan.status() != 3:
+        # Connection failed for some reason
+        raise RuntimeError("Wi-Fi Connection Failed!\nError Code:" + str(wlan.status()))
+    else:
+        # Connection successful
+        status = wlan.ifconfig()
+        print("Wi-Fi Connected!")
+        print("  IP Address:\t", status[0])
+        print("  Subnet Mask:\t", status[1])
+        print("  Gateway:\t", status[2])
+        print("  DNS Server:\t", status[3])
 
 
 def get_config(path: str) -> dict:
@@ -106,23 +82,23 @@ def get_config(path: str) -> dict:
         return cfg
 
 
-def main(cfg: dict):
+def main():
     """
     Main Loop
 
-    Creates WiFi object with configuration parameters and then connects
-    to the specified network.
-
-    :param cfg: the config dictionary
+    Get Wi-Fi configuration from config file, or default configuration
+    if no config file provided, and connect to the specified network.
     """
-    wifi = WiFi(cfg.get("wifi"))
-    wifi.connect()
+    try:
+        with open("config.json", "r") as f:
+            cfg: dict = ujson.load(f)
+    except OSError:
+        print("Error opening config file! Exiting...")
+        sys.exit(-1)
+    connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
+                    cfg.get("pwd", DEFAULT_WIFI["pwd"]))
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    try:
-        main(get_config("config.json"))
-    except OSError:
-        print("Error opening config file! Exiting...")
-        sys.exit(-1)
+    main()

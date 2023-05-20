@@ -16,7 +16,7 @@ import ujson
 import network
 
 __author__ = "Sam Rogers"
-__version__ = "0.2"
+__version__ = "1.0"
 
 # Default values if Wi-Fi configuration not specified
 DEFAULT_WIFI = {

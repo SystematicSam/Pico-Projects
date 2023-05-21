@@ -38,7 +38,7 @@ def main():
     """
     Main Loop
     """
-    pass
+    create_network(DEFAULT_WIFI["ssid"], DEFAULT_WIFI["pwd"])
 
 
 if __name__ == '__main__':

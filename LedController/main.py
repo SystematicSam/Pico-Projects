@@ -57,10 +57,6 @@ def http_server():
     sock.bind(addr)
     sock.listen(1)
 
-    # Using on-board LED to indicate connection status
-    led = Pin("LED", Pin.OUT)
-    led.off()
-
     # Listen for connections, respond to client requests
     while True:
         try:
@@ -68,14 +64,12 @@ def http_server():
             cl, addr = sock.accept()
             print("Client connected from: ", addr)
             request = cl.recv(1024)
-            led.on()
             print(request.decode("utf-8"))
 
             # Respond to clients with simple HTML page to be displayed.
             cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
             cl.send(HTML)
             cl.close()
-            led.off()
         except OSError as e:
             # Client loses connection to server.
             cl.close()

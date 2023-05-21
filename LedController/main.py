@@ -1,6 +1,15 @@
 """
 LED Controller
 
+A micropython script for setting up a Raspberry Pi Pico W asa an access
+point for an LED control server which allows the connected client to
+control the on-board LED of the Pico W.
+
+Author: Sam Rogers
+
+Created: 21/05/2023
+
+Requires: Raspberry Pi Pico W with Micropython
 """
 import network
 import socket
@@ -103,6 +112,10 @@ def led_control_server():
 def main():
     """
     Main Loop
+
+    Configures the Raspberry Pi Pico W as an access point and creates a
+    simple HTTP server to process client connections and requests to
+    control the on-board LED.
     """
     create_access_point(DEFAULT_WIFI["ssid"], DEFAULT_WIFI["pwd"])
     led_control_server()

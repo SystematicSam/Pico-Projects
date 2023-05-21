@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width, initial_scale=1">
+	<link rel="icon" type="image/png" href=led.png>
+	<title>LED Control Dashboard</title>
+	<style>
+        html {
+            font-family: Helvetica;
+            display: inline-block;
+            margin: 0px auto;
+            text-align: center;
+            text-decoration: none;
+            font-size: 30px;
+            margin: 2px;
+            cursor: pointer;
+        }
+        .buttonGreen {
+            background-color: #4CAF50;
+            border: 2px solid #000000;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .buttonRed {
+            background-color: #D11D53;
+            border: 2px solid #000000;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+	</style>
+</head>
+<body>
+	<p>Click the buttons to control the LED</p>
+	<button id="ledon" type="button" class="buttonGreen">TURN LED ON</button>
+	<p></p>
+	<button id="ledoff" type="button" class="buttonRed">TURN LED OFF</button>
+	<p></p>
+	<p>The LED is **ledState**</p>
+	<script>
+		const base_addr = window.location.href;
+		ledon.addEventListener('click', function() {fetch(`${base_addr}/ledon`)});
+        ledoff.addEventListener('click', function() {fetch(`${base_addr}/ledoff`)});
+	</script>
+</body>
+</html>

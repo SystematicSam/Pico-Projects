@@ -47,15 +47,20 @@ def create_access_point(ssid, pwd):
     print("  DNS Server:\t", status[3])
 
 
-def http_server():
+def led_control_server():
     """
-    Creates a simple HTTP server.
+    Creates a simple HTTP server for controlling the on-board LED.
     """
     # Listen for connections on port 80 (HTTP Server Port)
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     sock = socket.socket()
     sock.bind(addr)
-    sock.listen(1)
+    sock.listen()
+
+    # LED starts in OFF state
+    led = Pin("LED", Pin.OUT)
+    led.off()
+    led_state = False
 
     # Listen for connections, respond to client requests
     while True:
@@ -63,12 +68,31 @@ def http_server():
             # Accept client connections and print requests to console.
             cl, addr = sock.accept()
             print("Client connected from: ", addr)
-            request = cl.recv(1024)
-            print(request.decode("utf-8"))
+            request = cl.recv(1024).decode("utf-8")
+            print(request)
 
-            # Respond to clients with simple HTML page to be displayed.
-            cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
-            cl.send(HTML)
+            # Check if client has requested an LED change
+            request_url = request.split()[1]
+            if request_url.find("/ledon") != -1:
+                # Turn LED on
+                led_state = True
+                led.on()
+            elif request_url.find("/ledoff") != -1:
+                # Turn LED off
+                led_state = False
+                led.off()
+            else:
+                # Client has not requested a change
+                pass
+
+            # Get HTML page
+            file = open("index.html")  # TODO: Fix html buttons for iOS
+            html = file.read()
+            file.close()
+
+            # Now send HTML back to client with current LED state.
+            html = html.replace("**ledState**", "ON" if led_state else "OFF")
+            cl.send(html)
             cl.close()
         except OSError as e:
             # Client loses connection to server.
@@ -81,6 +105,7 @@ def main():
     Main Loop
     """
     create_access_point(DEFAULT_WIFI["ssid"], DEFAULT_WIFI["pwd"])
+    led_control_server()
 
 
 if __name__ == '__main__':

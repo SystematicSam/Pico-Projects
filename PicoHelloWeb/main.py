@@ -30,8 +30,12 @@ def create_network(ssid, pwd):
         time.sleep(1)
 
     # Access point is now available
-    print("Wi-Fi Active")
-    print("IP: ", ap.ifconfig())
+    status = ap.ifconfig()
+    print("Wi-Fi Connected!")
+    print("  IP Address:\t", status[0])
+    print("  Subnet Mask:\t", status[1])
+    print("  Gateway:\t", status[2])
+    print("  DNS Server:\t", status[3])
 
 
 def main():

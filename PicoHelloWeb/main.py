@@ -1,16 +1,45 @@
-# This is a sample Python script.
+"""
+Pico Hello Web
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+This module
+"""
+import time
+
+import network
+
+__author__ = "Sam Rogers"
+__version__ = 0.1
+
+DEFAULT_WIFI = {
+    "ssid": "systematic",
+    "pwd": "sam"
+}
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def create_network(ssid, pwd):
+    # Configure device to act as a Wi-Fi access point
+    ap = network.WLAN(network.AP_IF)
+    ap.config(essid=ssid, password=pwd)
+    ap.active(True)
+
+    # Wait for access point to go active
+    wait_time = 0
+    while not ap.active():
+        print("Waiting for activation...", wait_time)
+        wait_time += 1
+        time.sleep(1)
+
+    # Access point is now available
+    print("Wi-Fi Active")
+    print("IP: ", ap.ifconfig())
 
 
-# Press the green button in the gutter to run the script.
+def main():
+    """
+    Main Loop
+    """
+    pass
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()

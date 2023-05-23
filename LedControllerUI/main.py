@@ -16,7 +16,7 @@ import time
 from machine import Pin
 
 __author__ = "Sam Rogers"
-__version__ = "0.1"
+__version__ = "1.0"
 
 # Default parameters for the Wi-Fi access point
 AP = {

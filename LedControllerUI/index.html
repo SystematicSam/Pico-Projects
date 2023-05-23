@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8" name="viewport" content="width=device-width, initial_scale=1">
-	<link rel="icon" type="image/png" href=led.png>
 	<title>LED Control Dashboard</title>
 	<style>
         html {
@@ -47,11 +46,29 @@
 	<p></p>
 	<button id="ledoff" type="button" class="buttonRed">TURN LED OFF</button>
 	<p></p>
-	<p>The LED is **ledState**</p>
+	<p id="out">The LED is **ledState**</p>
 	<script>
 		const base_addr = window.location.href;
-		ledon.addEventListener('click', function() {fetch(`${base_addr}/ledon`)});
-        ledoff.addEventListener('click', function() {fetch(`${base_addr}/ledoff`)});
+        ledon.addEventListener('click', async function(ev) {
+            ev.preventDefault();
+            let state = await fetch(`${base_addr}ledon`);
+            out.textContent = await state.text();
+        });
+        ledoff.addEventListener('click', async function(ev) {
+            ev.preventDefault();
+            let state = await fetch(`${base_addr}ledoff`);
+            out.textContent = await state.text()
+        })
+        ledon.addEventListener('touchstart', async function(ev) {
+            ev.preventDefault();
+            let state = await fetch(`${base_addr}ledon`);
+            out.textContent = await state.text();
+        });
+        ledoff.addEventListener('touchstart', async function(ev) {
+            ev.preventDefault();
+            let state = await fetch(`${base_addr}ledoff`);
+            out.textContent = await state.text();
+        });
 	</script>
 </body>
 </html>

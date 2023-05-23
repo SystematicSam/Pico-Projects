@@ -10,7 +10,7 @@ __author__ = "Sam Rogers"
 __version__ = "0.1"
 
 # Default parameters for the Wi-Fi access point
-DEFAULT_WIFI = {
+AP = {
     "ssid": "Systematic",
     "pwd": "systemic"
 }
@@ -26,7 +26,6 @@ def create_access_point(ssid, pwd):
     """
     # Configure device to act as a Wi-Fi access point
     ap = network.WLAN(network.AP_IF)
-    ap.active(False)
     ap.config(essid=ssid, password=pwd)
     ap.active(True)
 
@@ -53,8 +52,10 @@ def led_control_server():
     # Listen for connections on port 80 (HTTP Server Port)
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     sock = socket.socket()
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(addr)
-    sock.listen()
+    sock.listen(1)
+    print("Listening....")
 
     # LED starts in OFF state
     led = Pin("LED", Pin.OUT)
@@ -71,35 +72,38 @@ def led_control_server():
             print(request)
 
             # Check if client has requested an LED change
-            request_url = request.split()[1]
-            if request_url.find("/ledon") != -1:
-                # Turn LED on
+            request_url = request.split()[1]                
+            if (request_url == "/ledon"):
                 led_state = True
                 led.on()
-            elif request_url.find("/ledoff") != -1:
-                # Turn LED off
+                cl.send("The LED is ON")
+            elif (request_url == "/ledoff"):
                 led_state = False
                 led.off()
+                cl.send("The LED is OFF")
+            elif (request_url == "/favicon.ico"):
+                cl.send("HTTP/1.1 200 OK\r\nContent-type: image/png\r\n\r\n")
+                with open("led.png", "rb") as file:
+                    while True:
+                        data = file.read(1024)
+                        if not data:
+                            break;
+                        cl.sendall(data)
             else:
-                # Client has not requested a change
-                pass
-
-            # Get HTML page
-            file = open("index.html")  # TODO: Fix html buttons for iOS
-            html = file.read()
-            file.close()
-
-            # Now send HTML back to client with current LED state.
-            html = html.replace("**ledState**", "ON" if led_state else "OFF")
-            cl.send(html)
+                with open("index.html") as file:
+                    html = file.read()
+                html = html.replace("**ledState**", "ON" if led_state else "OFF")
+                cl.send(html)
             cl.close()
         except OSError as e:
             # Client loses connection to server.
             cl.close()
             print('Connection Closed')
 
+
 def main():
-    pass
+    create_access_point(AP["ssid"], AP["pwd"])
+    led_control_server()
 
 
 if __name__ == '__main__':

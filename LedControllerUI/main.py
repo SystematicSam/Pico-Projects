@@ -1,5 +1,14 @@
 """
 LED Controller Interface
+
+This module creates a simple HTTP server on the Raspberry Pi Pico W so
+that a user can control the on-board LED from a webpage.
+
+Author: Sam Rogers
+
+Created: 22/05/2023
+
+Requires: Raspberry Pi Pico W with Micropython
 """
 import network
 import socket
@@ -71,17 +80,20 @@ def led_control_server():
             request = cl.recv(1024).decode("utf-8")
             print(request)
 
-            # Check if client has requested an LED change
-            request_url = request.split()[1]                
-            if (request_url == "/ledon"):
+            # Request processing
+            request_url = request.split()[1]
+            if request_url == "/ledon":
+                # User turns LED on
                 led_state = True
                 led.on()
                 cl.send("The LED is ON")
-            elif (request_url == "/ledoff"):
+            elif request_url == "/ledoff":
+                # User turns LED off
                 led_state = False
                 led.off()
                 cl.send("The LED is OFF")
-            elif (request_url == "/favicon.ico"):
+            elif request_url == "/favicon.ico":
+                # Returns image requests for browser tab icon
                 cl.send("HTTP/1.1 200 OK\r\nContent-type: image/png\r\n\r\n")
                 with open("led.png", "rb") as file:
                     while True:
@@ -90,9 +102,11 @@ def led_control_server():
                             break;
                         cl.sendall(data)
             else:
+                # Homepage
                 with open("index.html") as file:
                     html = file.read()
-                html = html.replace("**ledState**", "ON" if led_state else "OFF")
+                html = html.replace("**ledState**",
+                                    "ON" if led_state else "OFF")
                 cl.send(html)
             cl.close()
         except OSError as e:

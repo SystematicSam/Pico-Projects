@@ -48,27 +48,19 @@
 	<p></p>
 	<p id="out">The LED is **ledState**</p>
 	<script>
-		const base_addr = window.location.href;
+		const PicoAddress = window.location.href;
         ledon.addEventListener('click', async function(ev) {
+            // Send GET request (GET /ledon) to Pico W
             ev.preventDefault();
-            let state = await fetch(`${base_addr}ledon`);
+            let state = await fetch(`${PicoAddress}ledon`);
             out.textContent = await state.text();
         });
         ledoff.addEventListener('click', async function(ev) {
+            // Send GET request (GET /ledoff) to Pico W
             ev.preventDefault();
-            let state = await fetch(`${base_addr}ledoff`);
+            let state = await fetch(`${PicoAddress}ledoff`);
             out.textContent = await state.text()
         })
-        ledon.addEventListener('touchstart', async function(ev) {
-            ev.preventDefault();
-            let state = await fetch(`${base_addr}ledon`);
-            out.textContent = await state.text();
-        });
-        ledoff.addEventListener('touchstart', async function(ev) {
-            ev.preventDefault();
-            let state = await fetch(`${base_addr}ledoff`);
-            out.textContent = await state.text();
-        });
 	</script>
 </body>
 </html>

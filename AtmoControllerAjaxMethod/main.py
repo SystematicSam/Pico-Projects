@@ -92,7 +92,20 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
 
             # TODO: Request processing
             request_url = request.split()[1]
-
+            if request_url == "/favicon.ico":
+                cl.send("HTTP/1.1 200 OK\r\nContent-type: image/png\r\n\r\n")
+                with open("icon.png", "rb") as f:
+                    while True:
+                        data = f.read(1024)
+                        if not data:
+                            break
+                        cl.sendall(data)
+            else:
+                with open("index.html") as f:
+                    html = f.read()
+                    html = html.replace("**READING**", "Please select an "
+                                                       "option to begin")
+                    cl.send(html)
             cl.close()
         except OSError:
             # Client loses connection to server.

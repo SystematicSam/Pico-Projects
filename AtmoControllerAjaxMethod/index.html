@@ -53,6 +53,43 @@
 	<p></p>
 	<p id="readout">**READING**</p>
 	<script>
+        // Initial parameters
+        const PicoAddress = window.location.href;
+        let type = 0  // 0 -> none, 1 -> temp, 2 -> press, 3 ->humid, 4 -> alt
+
+        // Listeners
+        temp.addEventListener('click', function(ev) {ev.preventDefault; type = 1;});
+        press.addEventListener('click', function(ev) {ev.preventDefault; type = 2;});
+        humid.addEventListener('click', function(ev) {ev.preventDefault; type = 3;});
+        alt.addEventListener('click', function(ev) {ev.preventDefault; type = 4;});
+
+        // Send GET /{value_type} requests to Pico W
+        const getData = async () => {
+            try {
+                if (type == 0) {
+                    // Nothing selected yet, so no need to get data
+                    return;
+                } else if (type == 1) {
+                    // Get temperature data
+                    let data = await fetch(`${PicoAddress}temp`);
+                } else if (type == 2) {
+                    // Get pressure data
+                    let data = await fetch(`${PicoAddress}press`);
+                } else if (type == 3) {
+                    // Get humidity data
+                    let data = await fetch(`${PicoAddress}humid`);
+                } else if (type == 4) {
+                    // Get current altitude
+                    let data = await fetch(`${PicoAddress}alt`);
+                }
+                const reading = await data.text();
+                readout.textContent = reading;
+            } catch (ex) {
+                console.error("Error: ", ex);
+            }
+        }
+        // Update every quarter of a second
+        setInterval(getData, 250);
     </script>
 </body>
 </html>

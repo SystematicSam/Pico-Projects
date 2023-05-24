@@ -1,9 +1,6 @@
 """
 PiicoDev BME280 Atmospheric Sensor Controller
 """
-import network
-import socket
-import time
 import ujson
 from phew import server, connect_to_wifi
 from phew.template import render_template
@@ -18,6 +15,10 @@ DEFAULT_WIFI = {
     "ssid": "Samuel\u2019s iPhone",
     "pwd": "1qaz7ujm",
 }
+
+# Initialise sensor
+atmo = PiicoDev_BME280()
+zero = atmo.altitude()
 
 
 @server.route("/favicon.ico")
@@ -46,8 +47,6 @@ def main():
     wifi = connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
                     cfg.get("pwd", DEFAULT_WIFI["pwd"]))
     print("Wi-Fi Connected!\nIP: " + wifi)
-    atmo = PiicoDev_BME280()
-    zero = atmo.altitude()
     server.run()
 
 

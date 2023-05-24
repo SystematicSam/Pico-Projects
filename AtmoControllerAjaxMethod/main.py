@@ -92,6 +92,8 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
 
             # TODO: Request processing
             request_url = request.split()[1]
+
+            cl.close()
         except OSError:
             # Client loses connection to server.
             print('Connection Closed')

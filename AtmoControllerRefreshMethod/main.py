@@ -87,17 +87,33 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
             # Request processing
             request_url = request.split()[1]
             if request_url == "/temp":
-                # TODO: Return temperature data
-                pass
+                temp = "%.2f" % atmo.values()[0]
+                readout = "TEMP: " + temp + chr(176) + "C"
+                with open("index.html") as f:
+                    html = f.read()
+                    html = html.replace("**READING**", readout)
+                cl.send(html)
             elif request_url == "/press":
-                # TODO: Return pressure data
-                pass
+                press = "%.2f" % (atmo.values()[1] / 100)
+                readout = "PRESS: " + press + "hPa"
+                with open("index.html") as f:
+                    html = f.read()
+                    html = html.replace("**READING**", readout)
+                cl.send(html)
             elif request_url == "/humid":
-                # TODO: Return humidity data
-                pass
-            elif request_url == "/alti":
-                # TODO: Return altitude data
-                pass
+                humid = "%.2f" % atmo.values()[2]
+                readout = "HUM: " + humid + "%RH"
+                with open("index.html") as f:
+                    html = f.read()
+                    html = html.replace("**READING**", readout)
+                cl.send(html)
+            elif request_url == "/alt":
+                alt = "%.2f" % (atmo.altitude() - zero)
+                readout = "ALT: " + alt + "m"
+                with open("index.html") as f:
+                    html = f.read()
+                    html = html.replace("**READING**", readout)
+                cl.send(html)
             elif request_url == "/favicon.ico":
                 cl.send("HTTP/1.1 200 OK\r\nContent-type: image/png\r\n\r\n")
                 with open("icon.png", "rb") as f:
@@ -113,9 +129,12 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
                                                        "option to begin")
                     cl.send(html)
             cl.close()
-        except OSError as e:
+        except OSError:
             # Client loses connection to server.
             print('Connection Closed')
+        except IndexError:
+            # Empty request
+            pass
 
 
 
@@ -128,7 +147,7 @@ def main():
     connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
                     cfg.get("pwd", DEFAULT_WIFI["pwd"]))
     atmo = PiicoDev_BME280()  # Initialise sensor
-    zero = atmo.altitude  # Zero Point for Attitude
+    zero = atmo.altitude()  # Zero Point for Attitude
     atmo_control_server(atmo, zero)
 
 

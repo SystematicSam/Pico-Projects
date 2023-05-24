@@ -1,5 +1,18 @@
 """
 PiicoDev BME280 Atmospheric Sensor Controller
+
+This module creates a simple HTTP server on a Raspberry Pi Pico W so
+that a user can control an attached PiicoDev BME280 Atmospheric Sensor
+from a webpage.  Also, data is updated in quarter second intervals on
+the webpage with new values.
+
+NOTE: Best browser access is from Chrome (better button response)
+
+Author: Sam Rogers
+
+Created 24/05/2023
+
+Requires: Raspberry Pi Pico W with Micropython
 """
 import network
 import socket
@@ -136,6 +149,11 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
 def main():
     """
     Main Loop
+
+    Load Wi-Fi configuration from config file, connect to specified
+    network, initialise PiicoDev sensor, get initial altitude of sensor
+    and create a simple HTTP server to control the sensor and display
+    data output.
     """
     with open("config.json", "r") as f:
         cfg = ujson.load(f)

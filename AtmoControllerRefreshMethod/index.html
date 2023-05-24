@@ -4,18 +4,52 @@
 	<meta charset="UTF-8" name="viewport" content="width=device-width, intial_scale=1">
 	<title>PiicoDev BME280 Atmospheric Sensor Control Dashboard</title>
 	<style>
-		<!-- TODO: styles (html, btnRed, btnBlue, btnGreen, btnYellow) -->
+		html {
+            font-family: Helvetica;
+            display: inline-block;
+            margin: 0px auto;
+            text-align: center;
+            text-decoration: none;
+            font-size: 30px;
+            margin: 2px;
+            cursor: pointer;
+		}
+		.btn {
+			border: 2px solid #000000;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+			width: 175px;
+		}
+        .btnRed {
+            background-color: #D11D53; /* Red */
+            
+        }
+        .btnGreen {
+            background-color: #4CAF50; /* Green */
+        }
+        .btnBlue {
+            background-color: #4ba0d0; /* Blue */
+        }
+		.btnYellow {
+			background-color: #ffee00; /* Yellow */
+		}
 	</style>
 </head>
 <body>
 	<p>Click the buttons to control the sensor</p>
-	<button id="temp" type="button">TEMPERATURE</button>
+	<button class="btn btnRed" id="temp" type="button">TEMPERATURE</button>
 	<p></p>
-	<button id="press" type="button">PRESSURE</button>
+	<button class="btn btnGreen" id="press" type="button">PRESSURE</button>
 	<p></p>
-	<button id="humid" type="button">HUMIDITY</button>
+	<button class="btn btnBlue" id="humid" type="button">HUMIDITY</button>
 	<p></p>
-	<button id="alti" type="button">ALTITUDE</button>
+	<button class="btn btnYellow" id="alti" type="button">ALTITUDE</button>
 	<p></p>
 	<p id="readout">**READING**</p>
 	<script>

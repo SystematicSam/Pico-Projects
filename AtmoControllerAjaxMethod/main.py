@@ -90,9 +90,26 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
             request = cl.recv(1024).decode("utf-8")
             print(request)
 
-            # TODO: Request processing
+            # Request processing
             request_url = request.split()[1]
-            if request_url == "/favicon.ico":
+            if request_url == "/temp":
+                # Client requests temperature data
+                temp = "%.2f" % atmo.values()[0]
+                cl.send("TEMP: " + temp + chr(176) + "C")
+            elif request_url == "/press":
+                # Client requests pressure data
+                press = "%.2f" % (atmo.values()[1] / 100)
+                cl.send("PRESS: " + press + "hPa")
+            elif request_url == "/humid":
+                # Client requests relative humidity data
+                humid = "%.2f" % atmo.values()[2]
+                cl.send("HUM: " + humid + "%RH")
+            elif request_url == "/alt":
+                # Client requests current altitude
+                alt = "%.2f" % (atmo.altitude() - zero)
+                cl.send("ALT: " + alt + "m")
+            elif request_url == "/favicon.ico":
+                # Client wants the favicon
                 cl.send("HTTP/1.1 200 OK\r\nContent-type: image/png\r\n\r\n")
                 with open("icon.png", "rb") as f:
                     while True:
@@ -101,6 +118,7 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
                             break
                         cl.sendall(data)
             else:
+                # Client wants the default page
                 with open("index.html") as f:
                     html = f.read()
                     html = html.replace("**READING**", "Please select an "

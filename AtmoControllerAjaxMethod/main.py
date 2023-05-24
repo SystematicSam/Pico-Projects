@@ -64,6 +64,42 @@ def connect_to_wifi(ssid, pwd):
         print("  DNS Server:\t", status[3])
 
 
+def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
+    """
+    Creates a simple HTTP server for controlling and retrieving data
+    from the PiicoDev BME280 Atmospheric Sensor.
+
+    :param atmo: an object representation of the sensor
+    :param zero: the initial altitude of the sensor on startup
+    :return:
+    """
+    # Listen for connections on port 80 (HTTP Server Port)
+    addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+    sock = socket.socket()
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind(addr)
+    sock.listen()
+    print("Listening....")
+
+    # Listen for connections, respond to client requests
+    while True:
+        try:
+            # Accept client connections and print requests to console.
+            cl, addr = sock.accept()
+            print("Client connected from: ", addr)
+            request = cl.recv(1024).decode("utf-8")
+            print(request)
+
+            # TODO: Request processing
+            request_url = request.split()[1]
+        except OSError:
+            # Client loses connection to server.
+            print('Connection Closed')
+        except IndexError:
+            # Empty request
+            pass
+
+
 def main():
     """
     Main Loop

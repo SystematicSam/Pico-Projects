@@ -123,7 +123,9 @@ def main():
         cfg = ujson.load(f)
     connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
                     cfg.get("pwd", DEFAULT_WIFI["pwd"]))
-
+    atmo = PiicoDev_BME280()
+    zero = atmo.altitude()
+    atmo_control_server(atmo, zero)
 
 
 if __name__ == '__main__':

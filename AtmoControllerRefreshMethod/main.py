@@ -5,6 +5,7 @@ import network
 import socket
 import time
 import ujson
+from PiicoDev_BME280 import PiicoDev_BME280
 
 __author__ = "Sam Rogers"
 __version__ = "0.1"
@@ -62,7 +63,7 @@ def connect_to_wifi(ssid, pwd):
         print("  DNS Server:\t", status[3])
 
 
-def atmo_control_server():
+def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
     """
     Creates a simple HTTP server for controlling the on-board LED.
     """
@@ -106,8 +107,10 @@ def atmo_control_server():
                             break
                         cl.sendall(data)
             else:
-                with open("index.html", "rb") as f:
+                with open("index.html") as f:
                     html = f.read()
+                    html = html.replace("**READING**", "Please select an "
+                                                       "option to begin")
                     cl.send(html)
             cl.close()
         except OSError as e:
@@ -124,7 +127,9 @@ def main():
         cfg = ujson.load(f)
     connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
                     cfg.get("pwd", DEFAULT_WIFI["pwd"]))
-    atmo_control_server()
+    atmo = PiicoDev_BME280()  # Initialise sensor
+    zero = atmo.altitude  # Zero Point for Attitude
+    atmo_control_server(atmo, zero)
 
 
 if __name__ == '__main__':

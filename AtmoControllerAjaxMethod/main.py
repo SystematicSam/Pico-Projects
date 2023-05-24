@@ -21,7 +21,7 @@ import ujson
 from PiicoDev_BME280 import PiicoDev_BME280
 
 __author__ = "Sam Rogers"
-__version__ = "0.1"
+__version__ = "1.0"
 
 # Default Wi-Fi network parameters
 DEFAULT_WIFI = {

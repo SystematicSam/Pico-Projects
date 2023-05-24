@@ -20,15 +20,15 @@ DEFAULT_WIFI = {
 }
 
 
-
 def main():
     """
     Main Loop
     """
     with open("config.json", "r") as f:
         cfg = ujson.load(f)
-    connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
+    wifi = connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
                     cfg.get("pwd", DEFAULT_WIFI["pwd"]))
+    print("Wi-Fi Connected!\nIP: " + wifi)
     atmo = PiicoDev_BME280()
     zero = atmo.altitude()
 

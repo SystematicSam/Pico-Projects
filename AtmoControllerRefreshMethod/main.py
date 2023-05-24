@@ -1,5 +1,16 @@
 """
 PiicoDev BME280 Atmospheric Sensor Controller
+
+This module creates a simple HTTP server on a Raspberry Pi Pico W so
+that a user can control an attached PiicoDev BME280 Atmospheric Sensor
+from a webpage.  Also, data is updated in one second intervals on the
+webpage with new values.
+
+Author: Sam Rogers
+
+Created 23/05/2023
+
+Requires: Raspberry Pi Pico W with Micropython
 """
 import network
 import socket
@@ -10,6 +21,7 @@ from PiicoDev_BME280 import PiicoDev_BME280
 __author__ = "Sam Rogers"
 __version__ = "0.1"
 
+# Default Wi-Fi network parameters
 DEFAULT_WIFI = {
     "ssid": "Samuel\u2019s iPhone",
     "pwd": "1qaz7ujm",
@@ -65,7 +77,12 @@ def connect_to_wifi(ssid, pwd):
 
 def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
     """
-    Creates a simple HTTP server for controlling the on-board LED.
+    Creates a simple HTTP server for controlling and retrieving data
+    from the PiicoDev BME280 Atmospheric Sensor.
+
+    :param atmo: an object representation of the sensor
+    :param zero: the initial altitude of the sensor on startup
+    :return:
     """
     # Listen for connections on port 80 (HTTP Server Port)
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
@@ -87,6 +104,7 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
             # Request processing
             request_url = request.split()[1]
             if request_url == "/temp":
+                # User requests temperature data
                 temp = "%.2f" % atmo.values()[0]
                 readout = "TEMP: " + temp + chr(176) + "C"
                 with open("index.html") as f:
@@ -94,6 +112,7 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
                     html = html.replace("**READING**", readout)
                 cl.send(html)
             elif request_url == "/press":
+                # User requests pressure data
                 press = "%.2f" % (atmo.values()[1] / 100)
                 readout = "PRESS: " + press + "hPa"
                 with open("index.html") as f:
@@ -101,6 +120,7 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
                     html = html.replace("**READING**", readout)
                 cl.send(html)
             elif request_url == "/humid":
+                # User requests relative humidity data
                 humid = "%.2f" % atmo.values()[2]
                 readout = "HUM: " + humid + "%RH"
                 with open("index.html") as f:
@@ -108,6 +128,7 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
                     html = html.replace("**READING**", readout)
                 cl.send(html)
             elif request_url == "/alt":
+                # User requests current a altitude
                 alt = "%.2f" % (atmo.altitude() - zero)
                 readout = "ALT: " + alt + "m"
                 with open("index.html") as f:
@@ -115,6 +136,7 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
                     html = html.replace("**READING**", readout)
                 cl.send(html)
             elif request_url == "/favicon.ico":
+                # Web browser requests webpage icon
                 cl.send("HTTP/1.1 200 OK\r\nContent-type: image/png\r\n\r\n")
                 with open("icon.png", "rb") as f:
                     while True:
@@ -123,6 +145,7 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
                             break
                         cl.sendall(data)
             else:
+                # Homepage (first opens the website)
                 with open("index.html") as f:
                     html = f.read()
                     html = html.replace("**READING**", "Please select an "
@@ -141,6 +164,11 @@ def atmo_control_server(atmo: PiicoDev_BME280, zero: float):
 def main():
     """
     Main Loop:
+
+    Load Wi-Fi configuration from config file, connect to specified
+    network, initialise PiicoDev sensor, get initial altitude of sensor
+    and create a simple HTTP server to control the sensor and display
+    data output.
     """
     with open("config.json", "r") as f:
         cfg = ujson.load(f)

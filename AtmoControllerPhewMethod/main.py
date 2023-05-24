@@ -68,7 +68,10 @@ def main():
     """
     Main Loop
     """
-    pass
+    with open("config.json", "r") as f:
+        cfg = ujson.load(f)
+    connect_to_wifi(cfg.get("ssid", DEFAULT_WIFI["ssid"]),
+                    cfg.get("pwd", DEFAULT_WIFI["pwd"]))
 
 
 if __name__ == '__main__':

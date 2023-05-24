@@ -20,6 +20,23 @@ DEFAULT_WIFI = {
 }
 
 
+@server.route("/favicon.ico")
+def favicon(request):
+    with open("icon.png", "rb") as f:
+        body = b''
+        while True:
+            data = f.read(1024)
+            if not data:
+                break
+            body += data
+        return server.Response(body, headers={"Content-Type": "image/png"})
+
+
+@server.catchall()
+def catchall(request):
+    return render_template("index.html")
+
+
 def main():
     """
     Main Loop
@@ -31,6 +48,7 @@ def main():
     print("Wi-Fi Connected!\nIP: " + wifi)
     atmo = PiicoDev_BME280()
     zero = atmo.altitude()
+    server.run()
 
 
 if __name__ == '__main__':

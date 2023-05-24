@@ -23,6 +23,7 @@ def connect_to_wifi(ssid, pwd):
     :param pwd: the password to connect to the network
     """
     # Setup Pico in station mode and attempt Wi-Fi connection
+    print(ssid, pwd)
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(ssid, pwd)
@@ -70,7 +71,7 @@ def atmo_control_server():
     sock = socket.socket()
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(addr)
-    sock.listen(1)
+    sock.listen()
     print("Listening....")
 
     # Listen for connections, respond to client requests
@@ -84,6 +85,10 @@ def atmo_control_server():
 
             # Request processing
             request_url = request.split()[1]
+
+            with open("index.html", "rb") as f:
+                html = f.read()
+            cl.send(html)
         except OSError as e:
             # Client loses connection to server.
             print('Connection Closed')

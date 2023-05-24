@@ -6,6 +6,8 @@ that a user can control an attached PiicoDev BME280 Atmospheric Sensor
 from a webpage.  Also, data is updated in one second intervals on the
 webpage with new values.
 
+NOTE: Best browser access is from Chrome (better button response)
+
 Author: Sam Rogers
 
 Created 23/05/2023
@@ -19,7 +21,7 @@ import ujson
 from PiicoDev_BME280 import PiicoDev_BME280
 
 __author__ = "Sam Rogers"
-__version__ = "0.1"
+__version__ = "1.0"
 
 # Default Wi-Fi network parameters
 DEFAULT_WIFI = {

@@ -72,18 +72,24 @@
                 } else if (type == 1) {
                     // Get temperature data
                     let data = await fetch(`${PicoAddress}temp`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
                 } else if (type == 2) {
                     // Get pressure data
                     let data = await fetch(`${PicoAddress}press`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
                 } else if (type == 3) {
                     // Get humidity data
                     let data = await fetch(`${PicoAddress}humid`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
                 } else if (type == 4) {
                     // Get current altitude
                     let data = await fetch(`${PicoAddress}alt`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
                 }
-                const reading = await data.text();
-                readout.textContent = reading;
             } catch (ex) {
                 console.error("Error: ", ex);
             }

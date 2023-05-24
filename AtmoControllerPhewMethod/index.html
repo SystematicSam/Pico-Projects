@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width, intial_scale=1">
+	<title>PiicoDev BME280 Atmospheric Sensor Control Dashboard</title>
+	<style>
+		html {
+            font-family: Helvetica;
+            display: inline-block;
+            margin: 0px auto;
+            text-align: center;
+            text-decoration: none;
+            font-size: 30px;
+            margin: 2px;
+            cursor: pointer;
+		}
+		.btn {
+			border: 2px solid #000000;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+			width: 175px;
+		}
+        .btnRed {
+            background-color: #D11D53; /* Red */
+
+        }
+        .btnGreen {
+            background-color: #4CAF50; /* Green */
+        }
+        .btnBlue {
+            background-color: #4ba0d0; /* Blue */`
+        }
+		.btnYellow {
+			background-color: #ffee00; /* Yellow */
+		}
+	</style>
+</head>
+<body>
+	<p>Click the buttons to control the sensor</p>
+	<button class="btn btnRed" id="temp" type="button">TEMPERATURE</button>
+	<p></p>
+	<button class="btn btnGreen" id="press" type="button">PRESSURE</button>
+	<p></p>
+	<button class="btn btnBlue" id="humid" type="button">HUMIDITY</button>
+	<p></p>
+	<button class="btn btnYellow" id="alt" type="button">ALTITUDE</button>
+	<p></p>
+	<p id="readout">**READING**</p>
+	<script>
+        // Initial parameters
+        const PicoAddress = window.location.href;
+        let type = 0  // 0 -> none, 1 -> temp, 2 -> press, 3 ->humid, 4 -> alt
+
+        // Listeners
+        temp.addEventListener('click', function(ev) {ev.preventDefault; type = 1;});
+        press.addEventListener('click', function(ev) {ev.preventDefault; type = 2;});
+        humid.addEventListener('click', function(ev) {ev.preventDefault; type = 3;});
+        alt.addEventListener('click', function(ev) {ev.preventDefault; type = 4;});
+
+        // Send GET /{value_type} requests to Pico W
+        const getData = async () => {
+            try {
+                if (type == 0) {
+                    // Nothing selected yet, so no need to get data
+                    return;
+                } else if (type == 1) {
+                    // Get temperature data
+                    let data = await fetch(`${PicoAddress}temp`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
+                } else if (type == 2) {
+                    // Get pressure data
+                    let data = await fetch(`${PicoAddress}press`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
+                } else if (type == 3) {
+                    // Get humidity data
+                    let data = await fetch(`${PicoAddress}humid`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
+                } else if (type == 4) {
+                    // Get current altitude
+                    let data = await fetch(`${PicoAddress}alt`);
+	                const reading = await data.text();
+	                readout.textContent = reading;
+                }
+            } catch (ex) {
+                console.error("Error: ", ex);
+            }
+        }
+        // Update every quarter of a second
+        setInterval(getData, 250);
+    </script>
+</body>
+</html>

@@ -85,15 +85,35 @@ def atmo_control_server():
 
             # Request processing
             request_url = request.split()[1]
-
-            with open("index.html", "rb") as f:
-                html = f.read()
-            cl.send(html)
+            if request_url == "/temp":
+                # TODO: Return temperature data
+                pass
+            elif request_url == "/press":
+                # TODO: Return pressure data
+                pass
+            elif request_url == "/humid":
+                # TODO: Return humidity data
+                pass
+            elif request_url == "/alti":
+                # TODO: Return altitude data
+                pass
+            elif request_url == "/favicon.ico":
+                cl.send("HTTP/1.1 200 OK\r\nContent-type: image/png\r\n\r\n")
+                with open("icon.png", "rb") as f:
+                    while True:
+                        data = f.read(1024)
+                        if not data:
+                            break
+                        cl.sendall(data)
+            else:
+                with open("index.html", "rb") as f:
+                    html = f.read()
+                    cl.send(html)
+            cl.close()
         except OSError as e:
             # Client loses connection to server.
             print('Connection Closed')
-        finally:
-            cl.close()
+
 
 
 def main():
